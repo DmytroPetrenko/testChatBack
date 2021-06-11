@@ -20,6 +20,7 @@ export class AppGateway
 
   @SubscribeMessage('msgToServer')
   handleMessage(client: Socket, payload: string): void {
+    this.logger.log(payload);
     this.server.emit('msgToClient', payload);
   }
 
