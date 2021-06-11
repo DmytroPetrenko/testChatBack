@@ -19,8 +19,7 @@ export class AppGateway
   private logger: Logger = new Logger('AppGateway');
 
   @SubscribeMessage('msgToServer')
-  handleMessage(client: Socket, payload: string): void {
-    this.logger.log(payload);
+  handleMessageToServer(client: Socket, payload: string): void {
     this.server.emit('msgToClient', payload);
   }
 
@@ -34,5 +33,6 @@ export class AppGateway
 
   handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`Client connected: ${client.id}`);
+    this.server.emit('newMessage', { text: 'TextFromServ' });
   }
 }
