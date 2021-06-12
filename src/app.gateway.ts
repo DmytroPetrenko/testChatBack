@@ -9,13 +9,17 @@ import {
 import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 import { UserService } from './user.service';
+import { MessageService } from './message.service';
 //import { User } from './interfaces/user.interface';
 
 @WebSocketGateway()
 export class AppGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  constructor(private usersService: UserService) {}
+  constructor(
+    private usersService: UserService,
+    private messageService: MessageService,
+  ) {}
 
   @WebSocketServer()
   server: Server;
@@ -24,7 +28,9 @@ export class AppGateway
 
   @SubscribeMessage('msgToServer')
   handleMessageToServer(client: Socket, payload: string): void {
-    this.server.emit('msgToClient', payload);
+    this.messageService.createMessage(client.id, payload);
+    const message = this.messageService.getLast();
+    this.server.emit('newMessage', message);
   }
 
   @SubscribeMessage('generateNewUser')
@@ -44,6 +50,5 @@ export class AppGateway
 
   handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`Client connected: ${client.id}`);
-    this.server.emit('newMessage', { text: 'TextFromServ' });
   }
 }
