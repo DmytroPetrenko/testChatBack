@@ -10,6 +10,8 @@ import { Logger } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
 import { UserService } from './user.service';
 import { MessageService } from './message.service';
+import * as fs from 'fs';
+import * as path from 'path';
 //import { User } from './interfaces/user.interface';
 
 @WebSocketGateway()
@@ -28,7 +30,11 @@ export class AppGateway
 
   @SubscribeMessage('msgToServer')
   handleMessageToServer(client: Socket, payload: any): void {
-    this.messageService.createMessage(payload.clientId, payload.message, payload.clientName);
+    this.messageService.createMessage(
+      payload.clientId,
+      payload.message,
+      payload.clientName,
+    );
     const message = this.messageService.getLast();
     this.server.emit('newMessage', message);
   }
@@ -37,7 +43,19 @@ export class AppGateway
   handleGenerateNewUser(client: Socket): void {
     this.usersService.createUser(client.id);
     const user = this.usersService.getLast();
-    this.server.emit('setNewUser', user);
+    const self = this;
+
+    let readStream = fs.createReadStream(
+        path.resolve(__dirname, this.usersService.generateImgSrc()),
+        { encoding: 'binary' },
+      ),
+      chunks = [];
+
+    readStream.on('data', function (chunk) {
+      chunks.push(chunk);
+      user.chunk = chunk;
+      self.server.emit('setNewUser', user);
+    });
   }
 
   afterInit(server: Server) {

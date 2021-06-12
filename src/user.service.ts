@@ -6,7 +6,11 @@ export class UserService {
   private readonly users: User[] = [];
 
   createUser(clientId) {
-    const user = { id: clientId, name: this.generateName() };
+    const user = {
+      id: clientId,
+      name: this.generateName(),
+      chunk: null,
+    };
     this.users.push(user);
   }
 
@@ -91570,10 +91574,15 @@ export class UserService {
       'Zywiec',
     ];
 
-    var name =
+    const name =
       this.capFirst(names[this.getRandomInt(0, names.length + 1)]) +
       ' ' +
       this.capFirst(surnames[this.getRandomInt(0, surnames.length + 1)]);
     return name;
+  }
+
+  generateImgSrc(): string {
+    const imgSrc = `./public/Avatar-0${this.getRandomInt(1, 8)}.png`;
+    return imgSrc;
   }
 }
