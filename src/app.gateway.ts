@@ -27,8 +27,8 @@ export class AppGateway
   private logger: Logger = new Logger('AppGateway');
 
   @SubscribeMessage('msgToServer')
-  handleMessageToServer(client: Socket, payload: string): void {
-    this.messageService.createMessage(client.id, payload);
+  handleMessageToServer(client: Socket, payload: any): void {
+    this.messageService.createMessage(payload.clientId, payload.message, payload.clientName);
     const message = this.messageService.getLast();
     this.server.emit('newMessage', message);
   }
@@ -36,8 +36,8 @@ export class AppGateway
   @SubscribeMessage('generateNewUser')
   handleGenerateNewUser(client: Socket): void {
     this.usersService.createUser(client.id);
-    const users = this.usersService.findAll();
-    this.server.emit('getNewUser', users[0]);
+    const user = this.usersService.getLast();
+    this.server.emit('setNewUser', user);
   }
 
   afterInit(server: Server) {
