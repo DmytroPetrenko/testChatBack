@@ -9,7 +9,7 @@ export class UserService {
     const user = {
       id: clientId,
       name: this.generateName(),
-      chunk: null,
+      imgSrc: '',
     };
     this.users.push(user);
   }

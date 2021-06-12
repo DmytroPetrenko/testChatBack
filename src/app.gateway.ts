@@ -44,17 +44,32 @@ export class AppGateway
     this.usersService.createUser(client.id);
     const user = this.usersService.getLast();
     const self = this;
+    const imgSrc = this.usersService.generateImgSrc();
+    user.imgSrc = imgSrc;
+    self.server.emit('setNewUser', user);
 
-    let readStream = fs.createReadStream(
-        path.resolve(__dirname, this.usersService.generateImgSrc()),
-        { encoding: 'binary' },
-      ),
+    let readStream = fs.createReadStream(path.resolve(__dirname, imgSrc), {
+        encoding: 'binary',
+      }),
       chunks = [];
 
     readStream.on('data', function (chunk) {
       chunks.push(chunk);
-      user.chunk = chunk;
-      self.server.emit('setNewUser', user);
+      self.server.emit('sendChunk', chunk);
+    });
+  }
+
+  @SubscribeMessage('getUserImg')
+  handleGetUserImg(client: Socket, imgSrc: string): void {
+    const self = this;
+    let readStream = fs.createReadStream(path.resolve(__dirname, imgSrc), {
+        encoding: 'binary',
+      }),
+      chunks = [];
+
+    readStream.on('data', function (chunk) {
+      chunks.push(chunk);
+      self.server.emit('sendChunk', chunk);
     });
   }
 
