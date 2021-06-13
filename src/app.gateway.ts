@@ -12,7 +12,6 @@ import { UserService } from './user.service';
 import { MessageService } from './message.service';
 import * as fs from 'fs';
 import * as path from 'path';
-//import { User } from './interfaces/user.interface';
 
 @WebSocketGateway()
 export class AppGateway
@@ -40,23 +39,14 @@ export class AppGateway
   }
 
   @SubscribeMessage('generateNewUser')
-  handleGenerateNewUser(client: Socket): void {
-    this.usersService.createUser(client.id);
-    const user = this.usersService.getLast();
-    const self = this;
-    const imgSrc = this.usersService.generateImgSrc();
-    user.imgSrc = imgSrc;
-    self.server.emit('setNewUser', user);
+  handleGenerateNewUser(client: Socket, clientId): void {
+    this.usersService.createUser(clientId);
+    this.server.emit('setAllUsers', this.usersService.findAll());
+  }
 
-    let readStream = fs.createReadStream(path.resolve(__dirname, imgSrc), {
-        encoding: 'binary',
-      }),
-      chunks = [];
-
-    readStream.on('data', function (chunk) {
-      chunks.push(chunk);
-      self.server.emit('sendChunk', chunk);
-    });
+  @SubscribeMessage('setUsers')
+  handleSetUsers(client: Socket): void {
+    this.server.emit('setAllUsers', this.usersService.findAll());
   }
 
   @SubscribeMessage('getUserImg')
