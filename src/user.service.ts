@@ -9,13 +9,29 @@ export class UserService {
     const user = {
       id: clientId,
       name: this.generateName(),
-      imgSrc: '',
+      imgSrc: this.generateImgSrc(),
     };
     this.users.push(user);
   }
 
+  generateFileStream(fs, path, server, imgSrc): void {
+    let readStream = fs.createReadStream(path.resolve(__dirname, imgSrc), {
+        encoding: 'binary',
+      }),
+      chunks = [];
+
+    readStream.on('data', function (chunk) {
+      chunks.push(chunk);
+      server.emit('sendChunk', chunk);
+    });
+  }
+
   findAll(): User[] {
     return this.users;
+  }
+
+  getUserById(clientId): User {
+    return this.users.find((user) => user.id === clientId);
   }
 
   getLast(): User {
@@ -91581,7 +91597,7 @@ export class UserService {
     return name;
   }
 
-  generateImgSrc(): string {
+  private generateImgSrc(): string {
     const imgSrc = `./public/Avatar-0${this.getRandomInt(1, 8)}.png`;
     return imgSrc;
   }
