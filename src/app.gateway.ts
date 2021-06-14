@@ -50,17 +50,12 @@ export class AppGateway
   }
 
   @SubscribeMessage('getUserImg')
-  handleGetUserImg(client: Socket, imgSrc: string): void {
-    const self = this;
-    let readStream = fs.createReadStream(path.resolve(__dirname, imgSrc), {
-        encoding: 'binary',
-      }),
-      chunks = [];
+  handleGetUserImg(client: Socket, user: any): void {
+    const imgSrc = user.imgSrc as string;
 
-    readStream.on('data', function (chunk) {
-      chunks.push(chunk);
-      self.server.emit('sendChunk', chunk);
-    });
+    this.server.emit('sendUserImgId', user.id);
+
+    this.usersService.generateFileStream(fs, path, this.server, user.imgSrc);
   }
 
   afterInit(server: Server) {
