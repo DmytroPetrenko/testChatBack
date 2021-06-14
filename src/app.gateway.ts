@@ -41,21 +41,12 @@ export class AppGateway
   @SubscribeMessage('generateNewUser')
   handleGenerateNewUser(client: Socket, clientId): void {
     this.usersService.createUser(clientId);
-    this.server.emit('setAllUsers', this.usersService.findAll());
+    client.emit('setAllUsers', this.usersService.findAll());
   }
 
   @SubscribeMessage('setUsers')
   handleSetUsers(client: Socket): void {
-    this.server.emit('setAllUsers', this.usersService.findAll());
-  }
-
-  @SubscribeMessage('getUserImg')
-  handleGetUserImg(client: Socket, user: any): void {
-    const imgSrc = user.imgSrc as string;
-
-    this.server.emit('sendUserImgId', user.id);
-
-    this.usersService.generateFileStream(fs, path, this.server, user.imgSrc);
+    client.emit('setAllUsers', this.usersService.findAll());
   }
 
   afterInit(server: Server) {

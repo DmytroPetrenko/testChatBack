@@ -14,18 +14,6 @@ export class UserService {
     this.users.push(user);
   }
 
-  generateFileStream(fs, path, server, imgSrc): void {
-    let readStream = fs.createReadStream(path.resolve(__dirname, imgSrc), {
-        encoding: 'binary',
-      }),
-      chunks = [];
-
-    readStream.on('data', function (chunk) {
-      chunks.push(chunk);
-      server.emit('sendChunk', chunk);
-    });
-  }
-
   findAll(): User[] {
     return this.users;
   }
@@ -91598,7 +91586,7 @@ export class UserService {
   }
 
   private generateImgSrc(): string {
-    const imgSrc = `./public/Avatar-0${this.getRandomInt(1, 8)}.png`;
+    const imgSrc = `Avatar-0${this.getRandomInt(1, 8)}.png`;
     return imgSrc;
   }
 }
