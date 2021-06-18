@@ -39,7 +39,7 @@ export class AppGateway
   }
 
   @SubscribeMessage('generateNewUser')
-  handleGenerateNewUser(client: Socket, clientId): void {
+  handleGenerateNewUser(client: Socket, clientId: String): void {
     this.usersService.createUser(clientId);
     client.emit('setAllUsers', this.usersService.findAll());
   }
@@ -47,6 +47,16 @@ export class AppGateway
   @SubscribeMessage('setUsers')
   handleSetUsers(client: Socket): void {
     client.emit('setAllUsers', this.usersService.findAll());
+  }
+
+  @SubscribeMessage('regTypingUser')
+  handleRegTypingUser(client: Socket, str: String): void {
+    this.server.emit('regTypingUser', str);
+  }
+
+  @SubscribeMessage('unregTypingUser')
+  handleUnregTypingUser(client: Socket, str: String): void {
+    this.server.emit('unregTypingUser', str);
   }
 
   afterInit(server: Server) {
