@@ -19,4 +19,16 @@ export class MessageService {
   getLast(): Message {
     return this.messages[this.messages.length - 1];
   }
+
+  isMessageToEchoBot(): boolean {
+    return this.getLast().room.includes('echoBot');
+  }
+
+  isMessageToReverseBot(): boolean {
+    return this.getLast().room.includes('reverseBot');
+  }
+
+  isMessageToSpamBot(): boolean {
+    return this.getLast().room.includes('spamBot');
+  }
 }

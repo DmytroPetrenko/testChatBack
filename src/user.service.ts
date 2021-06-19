@@ -3,7 +3,12 @@ import { User } from './interfaces/user.interface';
 
 @Injectable()
 export class UserService {
-  private readonly users: User[] = [];
+  private readonly users: User[] = [
+    { id: 'echoBot', name: 'echoBot', imgSrc: 'echoBot.png' },
+    { id: 'reverseBot', name: 'reverseBot', imgSrc: 'reverseBot.png' },
+    { id: 'spamBot', name: 'spamBot', imgSrc: 'spamBot.png' },
+    { id: 'ignoreBot', name: 'ignoreBot', imgSrc: 'ignoreBot.png' },
+  ];
 
   createUser(clientId) {
     const user = {
@@ -30,11 +35,11 @@ export class UserService {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-  private getRandomInt(min, max): number {
+  getRandomInt(min, max): number {
     return Math.floor(Math.random() * (max - min)) + min;
   }
 
-  private generateName(): string {
+   generateName(): string {
     const names = [
       'Aaran',
       'Aaren',
