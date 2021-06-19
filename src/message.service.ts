@@ -5,11 +5,12 @@ import { Message } from './interfaces/message.interface';
 export class MessageService {
   private readonly messages: Message[] = [];
 
-  createMessage(id, text, name) {
+  createMessage(id, text, name, room) {
     const msg = {
       id: id,
       name: name,
       text: text,
+      room: room,
       time: new Date().toString().slice(15, 24),
     };
     this.messages.push(msg);

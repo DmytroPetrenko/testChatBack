@@ -33,9 +33,10 @@ export class AppGateway
       payload.clientId,
       payload.message,
       payload.clientName,
+      payload.room,
     );
     const message = this.messageService.getLast();
-    this.server.emit('newMessage', message);
+    this.server.to(message.room).emit('newMessage', message);
   }
 
   @SubscribeMessage('generateNewUser')
@@ -57,6 +58,18 @@ export class AppGateway
   @SubscribeMessage('unregTypingUser')
   handleUnregTypingUser(client: Socket, str: String): void {
     this.server.emit('unregTypingUser', str);
+  }
+
+  @SubscribeMessage('joinRoom')
+  handleJoinRoom(client: Socket, room: string) {
+    client.join(room);
+    //client.emit('joinedRoom', room);
+  }
+
+  @SubscribeMessage('leaveRoom')
+  handleLeaveRoom(client: Socket, room: string) {
+    client.leave(room);
+    //client.emit('leftRoom', room);
   }
 
   afterInit(server: Server) {
