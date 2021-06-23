@@ -94,6 +94,12 @@ export class AppGateway
     client.emit('setAllUsers', this.usersService.findAll());
   }
 
+  @SubscribeMessage('changeUserById')
+  handleChangeUserById(client: Socket, ids: any): void {
+    this.usersService.changeUserById(ids.id, ids.socketId);
+    this.server.emit('setAllUsers', this.usersService.findAll());
+  }
+
   @SubscribeMessage('regTypingUser')
   handleRegTypingUser(client: Socket, str: String): void {
     this.server.emit('regTypingUser', str);
@@ -122,9 +128,11 @@ export class AppGateway
 
   handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
+    client.emit('changeSocketId', 'offline');
   }
 
   handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`Client connected: ${client.id}`);
+    client.emit('changeSocketId', client.id);
   }
 }

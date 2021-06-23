@@ -4,10 +4,30 @@ import { User } from './interfaces/user.interface';
 @Injectable()
 export class UserService {
   private readonly users: User[] = [
-    { id: 'echoBot', name: 'echoBot', imgSrc: 'echoBot.png' },
-    { id: 'reverseBot', name: 'reverseBot', imgSrc: 'reverseBot.png' },
-    { id: 'spamBot', name: 'spamBot', imgSrc: 'spamBot.png' },
-    { id: 'ignoreBot', name: 'ignoreBot', imgSrc: 'ignoreBot.png' },
+    {
+      id: 'echoBot',
+      name: 'echoBot',
+      imgSrc: 'echoBot.png',
+      socketId: 'notdefault',
+    },
+    {
+      id: 'reverseBot',
+      name: 'reverseBot',
+      imgSrc: 'reverseBot.png',
+      socketId: 'notdefault',
+    },
+    {
+      id: 'spamBot',
+      name: 'spamBot',
+      imgSrc: 'spamBot.png',
+      socketId: 'notdefault',
+    },
+    {
+      id: 'ignoreBot',
+      name: 'ignoreBot',
+      imgSrc: 'ignoreBot.png',
+      socketId: 'notdefault',
+    },
   ];
 
   createUser(clientId) {
@@ -15,6 +35,7 @@ export class UserService {
       id: clientId,
       name: this.generateName(),
       imgSrc: this.generateImgSrc(),
+      socketId: 'offline',
     };
     this.users.push(user);
   }
@@ -25,6 +46,13 @@ export class UserService {
 
   getUserById(clientId): User {
     return this.users.find((user) => user.id === clientId);
+  }
+
+  changeUserById(id, socketId): void {
+    let user = this.users.find((user) => user.id === id);
+    if (user) {
+      user.socketId = socketId;
+    }
   }
 
   getLast(): User {
@@ -39,7 +67,7 @@ export class UserService {
     return Math.floor(Math.random() * (max - min)) + min;
   }
 
-   generateName(): string {
+  generateName(): string {
     const names = [
       'Aaran',
       'Aaren',
